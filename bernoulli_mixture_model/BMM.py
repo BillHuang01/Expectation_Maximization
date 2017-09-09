@@ -1,6 +1,12 @@
 import numpy as np
 import numerical_utils as nu
 
+def random_initialization(Y_, K_):
+    N_, D_ = Y_.shape
+    pi_ = np.random.dirichlet(np.ones(K_))
+    mu_ = np.random.beta(1, 1, size = (K_, D_))
+    return (pi_, mu_)
+
 def E_step(Y_, pi_, mu_):
     N_, D_ = Y_.shape
     K_ = mu_.shape[0]
@@ -25,10 +31,9 @@ def M_step(Y_, Z_):
         mu_[k,:] = np.sum(Y_.T * Z_[:,k], axis = 1) / Nk_[k]
     return (pi_, mu_)
 
-def BMM(Y_, K_, eps = np.power(0.1, 3)):
-    N_, D_ = Y_.shape
-    pi_ = np.random.dirichlet(np.ones(K_))
-    mu_ = np.random.beta(1, 1, size = (K_, D_))
+def BMM(Y_, K_, eps = np.power(0.1, 3),
+        initializer = random_initialization):
+    pi_, mu_ = initializer(Y_, K_)
     lower_bound = np.array([])
     continue_ = True
     while (continue_):
