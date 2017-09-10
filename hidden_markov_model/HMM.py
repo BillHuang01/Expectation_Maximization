@@ -103,7 +103,7 @@ def M_step(Y_, Q_, N_):
     B_ = sync_B(Y_, mu_, s_)
     return (pi0_, A_, B_)
 
-def HMM(Y_, K_, eps = np.power(0.1, 6),
+def HMM(Y_, K_, eps = np.power(0.1, 3),
         initializer = random_initialization):
     pi0_, A_, B_ = initializer(Y_, K_)
     lower_bound = np.array([])
