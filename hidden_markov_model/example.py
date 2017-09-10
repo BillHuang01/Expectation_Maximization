@@ -28,5 +28,5 @@ for i in range(1, N):
     Y[i,:] = np.random.multivariate_normal(mu[Z[i],:], cov)
 
 print(Z)
-hidden_state = HMM.HMM(Y, 3)
+hidden_state = HMM.HMM(Y, 3, initializer = HMM.kmean_initialization)
 print(hidden_state)
