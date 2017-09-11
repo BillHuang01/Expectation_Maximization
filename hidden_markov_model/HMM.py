@@ -1,3 +1,6 @@
+# Hidden Markov Model with Multivariate Gaussian Emission Distribution
+# each dimension are independent (covariance of different dimensions are 0)
+
 import numpy as np
 import kmean
 import numerical_utils as nu
