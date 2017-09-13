@@ -1,5 +1,5 @@
 import numpy as np
-import HMM
+import HMMG
 import HMMC
 
 # SET RANDOM SEED
@@ -31,7 +31,7 @@ for i in range(1, N):
     Y[i,:] = np.random.multivariate_normal(mu[Z[i],:], cov)
 
 print(Z)
-hidden_state = HMM.HMM(Y, 3, initializer = HMM.kmean_initialization)
+hidden_state = HMMG.HMM(Y, 3, initializer = HMMG.kmean_initialization)
 print(hidden_state)
 
 # HMM WITH CATEGORICAL EMISSION DISTRIBUTION
