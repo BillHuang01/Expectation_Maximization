@@ -1,5 +1,7 @@
 # Hidden Markov Model with Categorical Distribution
 
+__author__ = 'billhuang'
+
 import numpy as np
 import kmean
 import numerical_utils as nu
