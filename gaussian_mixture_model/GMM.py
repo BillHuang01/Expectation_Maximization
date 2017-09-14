@@ -1,3 +1,7 @@
+# dimension independent gaussian mixture model
+
+__author__ = 'billhuang'
+
 import numpy as np
 import kmean
 import numerical_utils as nu

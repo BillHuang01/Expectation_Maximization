@@ -1,3 +1,5 @@
+__author__ = 'billhuang'
+
 import numpy as np
 
 def get_center(label, feature, K):
