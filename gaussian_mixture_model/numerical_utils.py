@@ -1,15 +1,12 @@
 __author__ = 'billhuang'
 
 import numpy as np
-import sys
 
 def log(x):
     '''
     safe log for handling the case with zero count
     '''
-    if (np.sum(x==0) > 0):
-        x += np.power(0.1, 320)
-    return (np.log(x))
+    return (np.nan_to_num(np.log(x)))
 
 def normalize_log_across_row(UN):
     '''
