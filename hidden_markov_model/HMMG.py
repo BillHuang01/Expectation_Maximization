@@ -89,8 +89,14 @@ def update_params(Y_, Q_, N_):
         s_[k,:] = np.dot(ym_.T, np.dot(np.diag(Q_[:,k]), ym_)) / q_[k]
     return (mu_, s_)
 
+'''
 def compute_lower_bound(pi0_, A_, B_, Q_, N_):
     lower_bound_ = np.sum(N_ * A_) + np.sum(Q_[0,:] * pi0_) + np.sum(Q_ * B_) 
+    return (lower_bound_)
+'''
+
+def compute_lower_bound(M_):
+    lower_bound_ = np.sum(np.logaddexp.reduce(M_, axis = 1))
     return (lower_bound_)
 
 def E_step(pi0_, A_, B_):
@@ -98,7 +104,8 @@ def E_step(pi0_, A_, B_):
     R_ = pass_message_backward(A_, B_)
     Q_ = sync_Q(M_, R_)
     N_ = sync_N(M_, R_, A_, B_)
-    lower_bound_ = compute_lower_bound(pi0_, A_, B_, Q_, N_)
+    lower_bound_ = compute_lower_bound(M_)
+    #lower_bound_ = compute_lower_bound(pi0_, A_, B_, Q_, N_)
     return (Q_, N_, lower_bound_)
 
 def M_step(Y_, Q_, N_):
