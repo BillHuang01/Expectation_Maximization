@@ -19,6 +19,7 @@ def E_step(Y_, pi_, mu_):
         for k in range(K_):
             logZ_[(y_==1),k] += nu.log(mu_[k,d])
             logZ_[(y_==0),k] += nu.log(1 - mu_[k,d])
+    logZ_ = np.nan_to_num(logZ_) # to avoid underflow in addtion
     Z_ = nu.normalize_log_across_row(logZ_)
     lower_bound_ = np.sum(Z_ * (logZ_ - nu.log(Z_)))
     return (Z_, lower_bound_)
