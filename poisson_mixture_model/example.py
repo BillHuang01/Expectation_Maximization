@@ -7,7 +7,7 @@ import PMM
 np.random.seed(1234)
 
 # CREATE DATA
-N = [10, 20, 30]
+N = [20, 40, 60]
 
 lambda_ = np.array([5, 25, 45])
 

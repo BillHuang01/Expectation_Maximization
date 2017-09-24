@@ -17,6 +17,7 @@ def E_step(Y_, pi_, lambda_):
     logZ_ += nu.log(pi_)
     for k in range(K_):
         logZ_[:,k] += stats.poisson.logpmf(Y_, lambda_[k])
+    logZ_ = np.nan_to_num(logZ_) # to avoid overflow in addtion
     Z_ = nu.normalize_log_across_row(logZ_)
     lower_bound_ = np.sum(Z_ * (logZ_ - nu.log(Z_)))
     return (Z_, lower_bound_)
