@@ -35,6 +35,7 @@ def E_step(Y_, pi_, mu_, s_):
     for k in range(K_):
         logZ_[:,k] = stats.multivariate_normal.logpdf(Y_, mu_[k,:], s_[k,:])
         logZ_[:,k] += nu.log(pi_[k])
+    logZ_ = np.nan_to_num(logZ_) # to avoid overflow in addtion
     Z_ = nu.normalize_log_across_row(logZ_)
     lower_bound_ = np.sum(Z_ * (logZ_ - nu.log(Z_)))
     return (Z_, lower_bound_)
