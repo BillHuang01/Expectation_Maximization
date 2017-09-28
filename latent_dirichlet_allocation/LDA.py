@@ -34,6 +34,7 @@ def E_step(Y_, theta_, beta_, K_, D_):
             logphid[:,k] += beta_[k,:][Y_[d]]
         phid_ = nu.normalize_log_across_row(logphid)
         lower_bound_ += np.sum(phid_ * (logphid - nu.log(phid_)))
+        #lower_bound_ += np.sum(np.logaddexp.reduce(logphid, axis = 1))
         phi_.append(phid_)
     return (phi_, lower_bound_)
 
