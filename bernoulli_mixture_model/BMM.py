@@ -1,7 +1,10 @@
+from __future__ import absolute_import, division, print_function
+
 __author__ = 'billhuang'
 
 import numpy as np
 import numerical_utils as nu
+import sys
 
 def random_initialization(Y_, K_):
     N_, D_ = Y_.shape
@@ -36,15 +39,20 @@ def M_step(Y_, Z_):
 
 def BMM(Y_, K_, eps = np.power(0.1, 3),
         initializer = random_initialization):
+    print('Start Inference...')
     pi_, mu_ = initializer(Y_, K_)
     lower_bound = np.array([])
     continue_ = True
     while (continue_):
+        sys.stdout.write('*')
         Z_, lower_bound_ = E_step(Y_, pi_, mu_)
         lower_bound = np.append(lower_bound, lower_bound_)
         pi_, mu_ = M_step(Y_, Z_)
         if (lower_bound.size > 1):
             if ((np.exp(lower_bound[-1] - lower_bound[-2]) - 1) < eps):
                 continue_ = False
-    group_ = np.argmax(Z_, axis = 1)
-    return (group_)
+                sys.stdout.write('  done!\n')
+    print('pi')
+    print(pi_)
+    print('mu')
+    print(mu_)
