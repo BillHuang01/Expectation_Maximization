@@ -2,6 +2,7 @@ __author__ = 'billhuang'
 
 import numpy as np
 import numerical_utils as nu
+import sys
 
 def random_initialization(K_, D_, V_):
     theta_ = nu.log(np.random.dirichlet(np.ones(K_), size = D_))
@@ -45,15 +46,21 @@ def M_step(Y_, phi_, K_, D_, V_):
 
 def LDA(Y_, K_, D_, V_, eps = np.power(0.1, 3),
         initializer = random_initialization):
+    print('Start Inference...')
     theta_, beta_ = initializer(K_, D_, V_)
     lower_bound = np.array([])
     continue_ = True
     while (continue_):
+        sys.stdout.write('|')
         phi_, lower_bound_ = E_step(Y_, theta_, beta_, K_, D_)
         lower_bound = np.append(lower_bound, lower_bound_)
         theta_, beta_ =M_step(Y_, phi_, K_, D_, V_)
         if (lower_bound.size > 1):
             if ((np.exp(lower_bound[-1] - lower_bound[-2]) - 1) < eps):
                 continue_ = False
-    return (theta_, beta_)
+                sys.stdout.write('  done!\n')
+    print('theta')
+    print(np.exp(theta_))
+    print('beta')
+    print(np.exp(beta_))
     
