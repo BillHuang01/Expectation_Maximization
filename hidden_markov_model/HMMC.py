@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function
+
 # Hidden Markov Model with Categorical Distribution
 
 __author__ = 'billhuang'
@@ -11,8 +13,7 @@ def random_initialization(Y_, J_):
     pi0_ = nu.log(np.random.dirichlet(np.ones(J_)))
     A_ = nu.log(np.random.dirichlet(np.ones(J_), size = J_))
     Bstar_ = nu.log(np.random.dirichlet(np.ones(J_), size = C_))
-    B_ = sync_B(Y_, Bstar_)
-    return (pi0_, A_, B_)
+    return (pi0_, A_, Bstar_)
 
 def sync_B(Y_, Bstar_):
     B_ = Bstar_[Y_, :]
@@ -72,7 +73,8 @@ def compute_lower_bound(M_):
     return (lower_bound_)
 '''
 
-def E_step(pi0_, A_, B_):
+def E_step(Y_, pi0_, A_, Bstar_):
+    B_ = sync_B(Y_, Bstar_)
     M_ = pass_message_forward(pi0_, A_, B_)
     R_ = pass_message_backward(A_, B_)
     Q_ = sync_Q(M_, R_)
@@ -85,21 +87,26 @@ def M_step(Y_, Q_, N_):
     pi0_ = nu.log(Q_[0,:])
     A_ = sync_A(N_)
     Bstar_ = update_params(Y_, Q_)
-    B_ = sync_B(Y_, Bstar_)
-    return (pi0_, A_, B_)
+    return (pi0_, A_, Bstar_)
 
 def HMM(Y_, K_, eps = np.power(0.1, 3),
         initializer = random_initialization):
-    pi0_, A_, B_ = initializer(Y_, K_)
+    print('Start Inference...')
+    pi0_, A_, Bstar_ = initializer(Y_, K_)
     lower_bound = np.array([])
     continue_ = True
+    i = 0;
     while (continue_):
-        Q_, N_, lower_bound_ = E_step(pi0_, A_, B_)
+        print('*', end = '')
+        Q_, N_, lower_bound_ = E_step(Y_, pi0_, A_, Bstar_)
         lower_bound = np.append(lower_bound, lower_bound_)
-        pi0_, A_, B_ = M_step(Y_, Q_, N_)
+        pi0_, A_, Bstar_ = M_step(Y_, Q_, N_)
         if (lower_bound.size > 1):
             if ((np.exp(lower_bound[-1] - lower_bound[-2]) - 1) < eps):
                 continue_ = False
-    hidden_state_ = np.argmax(Q_, axis = 1)
-    return (hidden_state_)
+                print('  done!')
+    print('A')
+    print(np.exp(A_))
+    print('B')
+    print(np.exp(Bstar_))
 

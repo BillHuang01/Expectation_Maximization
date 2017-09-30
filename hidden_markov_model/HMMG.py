@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function
+
 # Hidden Markov Model with Multivariate Gaussian Emission Distribution
 # each dimension are independent (covariance of different dimensions are 0)
 
@@ -15,8 +17,7 @@ def random_initialization(Y_, K_):
     s_ = np.zeros((K_, D_, D_))
     for k in range(K_):
         s_[k,:] = np.eye(D_)
-    B_ = sync_B(Y_, mu_, s_)
-    return (pi0_, A_, B_)
+    return (pi0_, A_, mu_, s_)
 
 def kmean_initialization(Y_, K_):
     pi0_, A_ = init_transition(K_)
@@ -28,8 +29,7 @@ def kmean_initialization(Y_, K_):
         Yk_ = Y_[label_ == k]
         mu_[k,:] = np.mean(Yk_, axis = 0)
         s_[k,:] = np.eye(D_)
-    B_ = sync_B(Y_, mu_, s_)
-    return (pi0_, A_, B_)
+    return (pi0_, A_, mu_, s_)
 
 def init_transition(K_):
     pi0_ = nu.log(np.random.dirichlet(np.ones(K_)))
@@ -99,7 +99,8 @@ def compute_lower_bound(M_):
     return (lower_bound_)
 '''
 
-def E_step(pi0_, A_, B_):
+def E_step(Y_, pi0_, A_, mu_, s_):
+    B_ = sync_B(Y_, mu_, s_)
     M_ = pass_message_forward(pi0_, A_, B_)
     R_ = pass_message_backward(A_, B_)
     Q_ = sync_Q(M_, R_)
@@ -112,22 +113,28 @@ def M_step(Y_, Q_, N_):
     pi0_ = nu.log(Q_[0,:])
     A_ = sync_A(N_)
     mu_, s_ = update_params(Y_, Q_, N_)
-    B_ = sync_B(Y_, mu_, s_)
-    return (pi0_, A_, B_)
+    return (pi0_, A_, mu_, s_)
 
 def HMM(Y_, K_, eps = np.power(0.1, 3),
         initializer = random_initialization):
-    pi0_, A_, B_ = initializer(Y_, K_)
+    print('Start Inference...')
+    pi0_, A_, mu_, s_ = initializer(Y_, K_)
     lower_bound = np.array([])
     continue_ = True
     while (continue_):
-        Q_, N_, lower_bound_ = E_step(pi0_, A_, B_)
+        print('*', end = '')
+        Q_, N_, lower_bound_ = E_step(Y_, pi0_, A_, mu_, s_)
         lower_bound = np.append(lower_bound, lower_bound_)
-        pi0_, A_, B_ = M_step(Y_, Q_, N_)
+        pi0_, A_, mu_, s_ = M_step(Y_, Q_, N_)
         if (lower_bound.size > 1):
             if ((np.exp(lower_bound[-1] - lower_bound[-2]) - 1) < eps):
                 continue_ = False
-    hidden_state_ = np.argmax(Q_, axis = 1)
-    return (hidden_state_)
+                print('  done!')
+    print('A')
+    print(np.exp(A_))
+    print('mu')
+    print(mu_)
+    print('s')
+    print(s_)
     
     
