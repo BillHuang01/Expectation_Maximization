@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function
+
 # dimension independent gaussian mixture model
 
 __author__ = 'billhuang'
@@ -6,7 +8,6 @@ import numpy as np
 import kmean
 import numerical_utils as nu
 from scipy import stats
-import sys
 
 def random_initialization(Y_, K_):
     D_ = Y_.shape[1]
@@ -60,14 +61,14 @@ def GMM(Y_, K_, eps = np.power(0.1, 3),
     lower_bound = np.array([])
     continue_ = True
     while (continue_):
-        sys.stdout.write('*')
+        print('*', end = '')
         Z_, lower_bound_ = E_step(Y_, pi_, mu_, s_)
         lower_bound = np.append(lower_bound, lower_bound_)
         pi_, mu_, s_ = M_step(Y_, Z_)
         if (lower_bound.size > 1):
             if ((np.exp(lower_bound[-1] - lower_bound[-2]) - 1) < eps):
                 continue_ = False
-                sys.stdout.write('  done!\n')
+                print('  done!')
     print('pi')
     print(pi_)
     print('mu')
